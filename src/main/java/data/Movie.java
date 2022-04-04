@@ -31,6 +31,21 @@ public class Movie {
         return title;
     }
 
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "title='" + title + '\'' +
+                ", rating=" + rating +
+                ", poster='" + poster + '\'' +
+                ", year=" + year +
+                ", genre='" + genre + '\'' +
+                ", director='" + director + '\'' +
+                ", plot='" + plot + '\'' +
+                ", actors='" + actors + '\'' +
+                ", id=" + id +
+                '}';
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
