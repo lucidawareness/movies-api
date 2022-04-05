@@ -11,13 +11,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Objects;
 
 @WebServlet(name = "MovieServlet", urlPatterns = "/movies/*")
 public class MovieServlet extends HttpServlet {
 
     ArrayList<Movie> movies = new ArrayList<>();
-    int currentAvailableId = 0;
+    int currentAvailableId = 1;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -39,8 +38,7 @@ public class MovieServlet extends HttpServlet {
 
         Movie[] newMovies = new Gson().fromJson(input, Movie[].class);
         for (Movie movie : newMovies) {
-            currentAvailableId = movies.size() + 1;
-            movie.setId(currentAvailableId);
+            movie.setId(currentAvailableId++);
             movies.add(movie);
         }
 
@@ -94,54 +92,6 @@ public class MovieServlet extends HttpServlet {
                     if (editedMovie.getActors() != null) {
                         movie.setActors(editedMovie.getActors());
                     }
-
-//                    if (editedMovie.getTitle() == null){
-//                        editedMovie.setTitle(movie.getTitle());
-//                    } else {
-//                        movie.setTitle(editedMovie.getTitle());
-//                    }
-//
-//                    if (editedMovie.getRating() == null) {
-//                        editedMovie.setRating(movie.getRating());
-//                    } else {
-//                        movie.setRating(editedMovie.getRating());
-//                    }
-//
-//                    if (editedMovie.getPoster() == null) {
-//                        editedMovie.setPoster(movie.getPoster());
-//                    } else {
-//                        movie.setPoster(editedMovie.getPoster());
-//                    }
-//
-//                    if (editedMovie.getYear() == null) {
-//                        editedMovie.setYear(movie.getYear());
-//                    } else {
-//                        movie.setYear(editedMovie.getYear());
-//                    }
-//
-//                    if (editedMovie.getGenre() == null) {
-//                        editedMovie.setGenre(movie.getGenre());
-//                    } else {
-//                        movie.setGenre(editedMovie.getGenre());
-//                    }
-//
-//                    if (editedMovie.getDirector() == null) {
-//                        editedMovie.setDirector(movie.getDirector());
-//                    } else {
-//                        movie.setDirector(editedMovie.getDirector());
-//                    }
-//
-//                    if (editedMovie.getPlot() == null) {
-//                        editedMovie.setPlot(movie.getPlot());
-//                    } else {
-//                        movie.setPlot(editedMovie.getPlot());
-//                    }
-//
-//                    if (editedMovie.getActors() == null) {
-//                        editedMovie.setActors(movie.getActors());
-//                    } else {
-//                        movie.setActors(editedMovie.getActors());
-//                    }
 
                     PrintWriter out = response.getWriter();
                     out.println("Movie edited");
