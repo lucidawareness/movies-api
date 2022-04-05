@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @WebServlet(name = "MovieServlet", urlPatterns = "/movies/*")
 public class MovieServlet extends HttpServlet {
@@ -21,8 +22,6 @@ public class MovieServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
-        Movie movie1 = new Movie("Interstellar", 5, "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQUw076GR7JpnfExoBLTMpiE9otUzk518SylUdC1roF6Ah63NS9", 2014, "Sci-fi", "Christopher Nolan", "In Earth's future, a global crop blight and second Dust Bowl are slowly rendering the planet uninhabitable. Professor Brand (Michael Caine), a brilliant NASA physicist, is working on plans to save mankind by transporting Earth's population to a new home via a wormhole", "Matthew McConaughe", 1);
-        String movieString = new Gson().toJson(movie1);
         try {
             PrintWriter out = response.getWriter();
             out.println(movies.toString());
@@ -47,6 +46,126 @@ public class MovieServlet extends HttpServlet {
 
         try {
             PrintWriter out = response.getWriter();
+            out.println(movies);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("application/json");
+        String[] uriParts = request.getRequestURI().split("/");
+        int targetId = Integer.parseInt(uriParts[uriParts.length - 1]);
+        for (Movie movie : movies) {
+            if (movie.getId() == targetId) {
+                try {
+                    Movie editedMovie = new Gson().fromJson(request.getReader(), Movie.class);
+                    editedMovie.setId(targetId);
+
+                    if (editedMovie.getTitle() != null) {
+                        movie.setTitle(editedMovie.getTitle());
+                    }
+
+                    if (editedMovie.getRating() != null) {
+                        movie.setRating(editedMovie.getRating());
+                    }
+
+                    if (editedMovie.getPoster() != null) {
+                        movie.setPoster(editedMovie.getPoster());
+                    }
+
+                    if (editedMovie.getYear() != null) {
+                        movie.setYear(editedMovie.getYear());
+                    }
+
+                    if (editedMovie.getGenre() != null) {
+                        movie.setGenre(editedMovie.getGenre());
+                    }
+
+                    if (editedMovie.getDirector() != null) {
+                        movie.setDirector(editedMovie.getDirector());
+                    }
+
+                    if (editedMovie.getPlot() != null) {
+                        movie.setPlot(editedMovie.getPlot());
+                    }
+
+                    if (editedMovie.getActors() != null) {
+                        movie.setActors(editedMovie.getActors());
+                    }
+
+//                    if (editedMovie.getTitle() == null){
+//                        editedMovie.setTitle(movie.getTitle());
+//                    } else {
+//                        movie.setTitle(editedMovie.getTitle());
+//                    }
+//
+//                    if (editedMovie.getRating() == null) {
+//                        editedMovie.setRating(movie.getRating());
+//                    } else {
+//                        movie.setRating(editedMovie.getRating());
+//                    }
+//
+//                    if (editedMovie.getPoster() == null) {
+//                        editedMovie.setPoster(movie.getPoster());
+//                    } else {
+//                        movie.setPoster(editedMovie.getPoster());
+//                    }
+//
+//                    if (editedMovie.getYear() == null) {
+//                        editedMovie.setYear(movie.getYear());
+//                    } else {
+//                        movie.setYear(editedMovie.getYear());
+//                    }
+//
+//                    if (editedMovie.getGenre() == null) {
+//                        editedMovie.setGenre(movie.getGenre());
+//                    } else {
+//                        movie.setGenre(editedMovie.getGenre());
+//                    }
+//
+//                    if (editedMovie.getDirector() == null) {
+//                        editedMovie.setDirector(movie.getDirector());
+//                    } else {
+//                        movie.setDirector(editedMovie.getDirector());
+//                    }
+//
+//                    if (editedMovie.getPlot() == null) {
+//                        editedMovie.setPlot(movie.getPlot());
+//                    } else {
+//                        movie.setPlot(editedMovie.getPlot());
+//                    }
+//
+//                    if (editedMovie.getActors() == null) {
+//                        editedMovie.setActors(movie.getActors());
+//                    } else {
+//                        movie.setActors(editedMovie.getActors());
+//                    }
+
+                    PrintWriter out = response.getWriter();
+                    out.println("Movie edited");
+                } catch (IOException e) {
+                    System.out.println("Error");
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("application/json");
+        String[] uriParts = request.getRequestURI().split("/");
+        int targetId = Integer.parseInt(uriParts[uriParts.length - 1]);
+
+        try {
+            for (int i = 0; i < movies.size(); i++) {
+                if (movies.get(i).getId() == targetId) {
+                    movies.remove(i);
+                }
+            }
+            PrintWriter out = response.getWriter();
+            out.println("Movie deleted");
             out.println(movies);
         } catch (IOException ex) {
             ex.printStackTrace();
