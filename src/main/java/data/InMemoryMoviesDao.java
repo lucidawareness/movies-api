@@ -11,48 +11,84 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryMoviesDao implements MoviesDao {
 
-    private HashMap<Integer, Movie> moviesMap = getMoviesMap();
+    private final ArrayList<Movie> movies = new ArrayList<>();
+    private int nextId = 1;
 
     @Override
     public List<Movie> all() throws SQLException {
-        return moviesMap != null ? new ArrayList(moviesMap.values()) : null;
+        return movies;
+    }
+
+    @Override
+    public void insertAll(Movie[] newMovies) throws SQLException {
+        for (Movie movie : newMovies) {
+            movie.setId(nextId++);
+            movies.add(movie);
+        }
+    }
+
+    @Override
+    public void update(Movie editedMovie) throws SQLException {
+        for (Movie movie : movies) {
+            if (Objects.equals(movie.getId(), editedMovie.getId())) {
+                if (editedMovie.getTitle() != null) {
+                    movie.setTitle(editedMovie.getTitle());
+                }
+
+                if (editedMovie.getRating() != null) {
+                    movie.setRating(editedMovie.getRating());
+                }
+
+                if (editedMovie.getPoster() != null) {
+                    movie.setPoster(editedMovie.getPoster());
+                }
+
+                if (editedMovie.getYear() != null) {
+                    movie.setYear(editedMovie.getYear());
+                }
+
+                if (editedMovie.getGenre() != null) {
+                    movie.setGenre(editedMovie.getGenre());
+                }
+
+                if (editedMovie.getDirector() != null) {
+                    movie.setDirector(editedMovie.getDirector());
+                }
+
+                if (editedMovie.getPlot() != null) {
+                    movie.setPlot(editedMovie.getPlot());
+                }
+
+                if (editedMovie.getActors() != null) {
+                    movie.setActors(editedMovie.getActors());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void delete(int targetId) throws SQLException {
+        for (int i = 0; i < movies.size(); i++) {
+            if (movies.get(i).getId() == targetId) {
+                movies.remove(i);
+                break;
+            }
+        }
     }
 
     @Override
     public Movie findOne(int id) {
-        return moviesMap != null ? moviesMap.get(id) : null;
+        return null;
     }
 
     @Override
     public void insert(Movie movie) {
-        int newId = moviesMap.keySet().size() + 1;
-        movie.setId(newId);
-        moviesMap.put(newId, movie);
-    }
-
-    @Override
-    public void insertAll(Movie[] movies) throws SQLException {
-        moviesMap = getMoviesMap(Arrays.asList(movies));
-    }
-
-    @Override
-    public void update(Movie movie) throws SQLException {
-        if (moviesMap != null) {
-            moviesMap.replace(movie.getId(), movie);
-        }
-    }
-
-    @Override
-    public void delete(int id) throws SQLException {
-        if (moviesMap != null) {
-            moviesMap.remove(id);
-        }
     }
 
     private HashMap<Integer, Movie> getMoviesMap() {
