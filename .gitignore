@@ -8,3 +8,7 @@
 # Compiled output
 *.class
 out/*
+
+Config.java
+
+target

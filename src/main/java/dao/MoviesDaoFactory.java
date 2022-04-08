@@ -1,12 +1,12 @@
-package data;
+package dao;
 
-import data.InMemoryMoviesDao;
-import data.MoviesDao;
 //import data.MySqlMoviesDao;
+
+import Config.Config;
 
 public class MoviesDaoFactory {
 
-    // private static Config config = new Config();
+     private static Config config = new Config();
 
     public enum DAOType {MYSQL, IN_MEMORY}
 
@@ -17,6 +17,9 @@ public class MoviesDaoFactory {
         switch (daoType) {
             case IN_MEMORY: { //yet we have one switch case. We'll get to that!
                 return new InMemoryMoviesDao();
+            }
+            case MYSQL:{
+                return new MySqlMoviesDao();
             }
         }
         return null;
