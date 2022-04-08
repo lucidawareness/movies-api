@@ -18,7 +18,7 @@ public class MySqlMoviesDao implements MoviesDao {
             DriverManager.registerDriver(new Driver());
 
             this.connection = DriverManager.getConnection(
-                    "jdbc:mysql://"+ Config.getUrl() +":3306/irvin?allowPublicKeyRetrieval=true&useSSL=false",
+                    "jdbc:mysql://" + Config.getUrl() + ":3306/irvin?allowPublicKeyRetrieval=true&useSSL=false",
                     Config.getUser(),
                     Config.getPassword()
             );
@@ -56,17 +56,58 @@ public class MySqlMoviesDao implements MoviesDao {
     }
 
     @Override
-    public Movie findOne(int id) {
-        return null;
+    public Movie findOne(int id) throws SQLException {
+            Movie movie = null;
+            String sql = "SELECT * FROM movie WHERE id= ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setInt(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            movie = new Movie(
+                    resultSet.getString("title"),
+                    resultSet.getInt("rating"),
+                    resultSet.getString("poster"),
+                    resultSet.getInt("year"),
+                    resultSet.getString("genre"),
+                    resultSet.getString("director"),
+                    resultSet.getString("plot"),
+                    resultSet.getString("actors"),
+                    resultSet.getInt("id"));
+
+            return movie;
     }
 
     @Override
     public void insert(Movie movie) {
+        try {
+            StringBuilder sql = new StringBuilder("INSERT INTO movie (" +
+                    "title, year, director, actors, rating, poster, genre, plot) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+
+            ps.setString(1,movie.getTitle());
+            ps.setInt(2, movie.getYear());
+            ps.setString(3, movie.getDirector());
+            ps.setString(4, movie.getActors());
+            ps.setInt(5, movie.getRating());
+            ps.setString(6, movie.getPoster());
+            ps.setString(7, movie.getGenre());
+            ps.setString(8, movie.getPlot());
+
+            ps.executeQuery();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
-
     public void insertAll(Movie[] movies) throws SQLException {
 
         // Build sql template
@@ -141,11 +182,10 @@ public class MySqlMoviesDao implements MoviesDao {
     }
 
     public void cleanUp() {
-        try{
-            System.out.println("Closing connection");
+        try {
             connection.close();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        };
+        }
     }
 }

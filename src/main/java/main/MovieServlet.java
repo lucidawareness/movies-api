@@ -1,8 +1,6 @@
 package main;
 
-import Config.Config;
 import com.google.gson.Gson;
-import dao.InMemoryMoviesDao;
 import dao.MySqlMoviesDao;
 import data.Movie;
 
@@ -83,8 +81,6 @@ public class MovieServlet extends HttpServlet {
 
     @Override
     public void destroy(){
-        super.destroy();
-
         dao.cleanUp();
     }
 }
