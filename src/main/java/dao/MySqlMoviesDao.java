@@ -57,27 +57,27 @@ public class MySqlMoviesDao implements MoviesDao {
 
     @Override
     public Movie findOne(int id) throws SQLException {
-            Movie movie = null;
-            String sql = "SELECT * FROM movie WHERE id= ?";
+        Movie movie = null;
+        String sql = "SELECT * FROM movie WHERE id= ?";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = connection.prepareStatement(sql);
 
-            statement.setInt(1, id);
+        statement.setInt(1, id);
 
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            movie = new Movie(
-                    resultSet.getString("title"),
-                    resultSet.getInt("rating"),
-                    resultSet.getString("poster"),
-                    resultSet.getInt("year"),
-                    resultSet.getString("genre"),
-                    resultSet.getString("director"),
-                    resultSet.getString("plot"),
-                    resultSet.getString("actors"),
-                    resultSet.getInt("id"));
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        movie = new Movie(
+                resultSet.getString("title"),
+                resultSet.getInt("rating"),
+                resultSet.getString("poster"),
+                resultSet.getInt("year"),
+                resultSet.getString("genre"),
+                resultSet.getString("director"),
+                resultSet.getString("plot"),
+                resultSet.getString("actors"),
+                resultSet.getInt("id"));
 
-            return movie;
+        return movie;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class MySqlMoviesDao implements MoviesDao {
 
             PreparedStatement ps = connection.prepareStatement(sql.toString());
 
-            ps.setString(1,movie.getTitle());
+            ps.setString(1, movie.getTitle());
             ps.setInt(2, movie.getYear());
             ps.setString(3, movie.getDirector());
             ps.setString(4, movie.getActors());
@@ -147,23 +147,59 @@ public class MySqlMoviesDao implements MoviesDao {
 
     @Override
     public void update(Movie movie) throws SQLException {
-        StringBuilder sql = new StringBuilder("UPDATE movie SET title = ?, year= ?, director= ?, actors= ?, rating= ?, poster= ?, genre= ?, plot=? WHERE id= ?");
+        //Get previous movie object
+        int movieId = movie.getId();
+        Movie previousMovie = findOne(movieId);
+        //Prepare the SQL query
+        String sql2 = "UPDATE movie SET title = ?, year= ?, director= ?, actors= ?, rating= ?, poster= ?, genre= ?, plot=? WHERE id= ?";
 
-        PreparedStatement statement = connection.prepareStatement(sql.toString());
+        PreparedStatement statement2 = connection.prepareStatement(sql2);
+        //Check if any fields are not null, if not null use previous movie data to plug in.
+        if (movie.getTitle() != null) {
+            statement2.setString(1, movie.getTitle());
+        } else {
+            statement2.setString(1, previousMovie.getTitle());
+        }
+        if (movie.getYear() != null) {
+            statement2.setInt(2, movie.getYear());
+        } else {
+            statement2.setInt(2, previousMovie.getYear());
+        }
+        if (movie.getDirector() != null) {
+            statement2.setString(3, movie.getDirector());
+        } else {
+            statement2.setString(3, previousMovie.getDirector());
+        }
+        if (movie.getActors() != null) {
+            statement2.setString(4, movie.getActors());
+        } else {
+            statement2.setString(4, previousMovie.getActors());
+        }
+        if (movie.getRating() != null) {
+            statement2.setInt(5, movie.getRating());
+        } else {
+            statement2.setInt(5, previousMovie.getRating());
+        }
+        if (movie.getPoster() != null) {
+            statement2.setString(6, movie.getPoster());
+        } else {
+            statement2.setString(6, previousMovie.getPoster());
+        }
+        if (movie.getGenre() != null) {
+            statement2.setString(7, movie.getGenre());
+        } else {
+            statement2.setString(7, previousMovie.getGenre());
+        }
+        if (movie.getPlot() != null) {
+            statement2.setString(8, movie.getPlot());
+        } else {
+            statement2.setString(8, previousMovie.getPlot());
+        }
 
-        statement.setString(1, movie.getTitle());
-        statement.setInt(2, movie.getYear());
-        statement.setString(3, movie.getDirector());
-        statement.setString(4, movie.getActors());
-        statement.setInt(5, movie.getRating());
-        statement.setString(6, movie.getPoster());
-        statement.setString(7, movie.getGenre());
-        statement.setString(8, movie.getPlot());
-        statement.setInt(9, movie.getId());
+        statement2.setInt(9, movie.getId());
 
-        statement.executeUpdate();
-        statement.close();
-
+        statement2.executeUpdate();
+        statement2.close();
     }
 
     @Override
