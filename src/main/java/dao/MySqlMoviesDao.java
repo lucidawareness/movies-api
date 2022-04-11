@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MySqlMoviesDao implements MoviesDao {
-    private Connection connection = null;
+    private final Connection connection;
 
     public MySqlMoviesDao() {
         try {
@@ -32,7 +32,7 @@ public class MySqlMoviesDao implements MoviesDao {
     public List<Movie> all() throws SQLException {
         Statement statement = connection.createStatement();
 
-        ResultSet rs = statement.executeQuery("SELECT * FROM movie");
+        ResultSet rs = statement.executeQuery("SELECT * FROM movies");
 
         List<Movie> movies = new ArrayList<>();
 
@@ -57,8 +57,8 @@ public class MySqlMoviesDao implements MoviesDao {
 
     @Override
     public Movie findOne(int id) throws SQLException {
-        Movie movie = null;
-        String sql = "SELECT * FROM movie WHERE id= ?";
+        Movie movie;
+        String sql = "SELECT * FROM movies WHERE id= ?";
 
         PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -83,7 +83,7 @@ public class MySqlMoviesDao implements MoviesDao {
     @Override
     public void insert(Movie movie) {
         try {
-            StringBuilder sql = new StringBuilder("INSERT INTO movie (" +
+            StringBuilder sql = new StringBuilder("INSERT INTO movies (" +
                     "title, year, director, actors, rating, poster, genre, plot) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -111,7 +111,7 @@ public class MySqlMoviesDao implements MoviesDao {
     public void insertAll(Movie[] movies) throws SQLException {
 
         // Build sql template
-        StringBuilder sql = new StringBuilder("INSERT INTO movie (" +
+        StringBuilder sql = new StringBuilder("INSERT INTO movies (" +
                 "title, year, director, actors, rating, poster, genre, plot) " +
                 "VALUES ");
 
@@ -151,9 +151,9 @@ public class MySqlMoviesDao implements MoviesDao {
         int movieId = movie.getId();
         Movie previousMovie = findOne(movieId);
         //Prepare the SQL query
-        String sql2 = "UPDATE movie SET title = ?, year= ?, director= ?, actors= ?, rating= ?, poster= ?, genre= ?, plot=? WHERE id= ?";
+        String sql = "UPDATE movies SET title = ?, year= ?, director= ?, actors= ?, rating= ?, poster= ?, genre= ?, plot=? WHERE id= ?";
 
-        PreparedStatement statement2 = connection.prepareStatement(sql2);
+        PreparedStatement statement2 = connection.prepareStatement(sql);
         //Check if any fields are not null, if not null use previous movie data to plug in.
         if (movie.getTitle() != null) {
             statement2.setString(1, movie.getTitle());
@@ -206,7 +206,7 @@ public class MySqlMoviesDao implements MoviesDao {
     public void delete(int id) throws SQLException {
 
         String sql =
-                "DELETE FROM movie " +
+                "DELETE FROM movies " +
                         "WHERE id = ?";
 
         PreparedStatement statement = connection.prepareStatement(sql);

@@ -24,7 +24,8 @@ public class MovieServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             response.setContentType("application/json");
             out.println(movieString);
-        } catch (IOException | SQLException ex) {
+        }
+        catch (IOException | SQLException ex) {
             ex.printStackTrace();
         }
 
