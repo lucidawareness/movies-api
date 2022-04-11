@@ -98,7 +98,7 @@ public class MySqlMoviesDao implements MoviesDao {
             ps.setString(7, movie.getGenre());
             ps.setString(8, movie.getPlot());
 
-            ps.executeQuery();
+            ps.executeUpdate();
 
 
         } catch (SQLException e) {

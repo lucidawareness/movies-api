@@ -33,15 +33,15 @@ public class MovieServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Movie[] newMovies = new Gson().fromJson(request.getReader(), Movie[].class);
+        Movie newMovies = new Gson().fromJson(request.getReader(), Movie.class);
 
         try {
-            dao.insertAll(newMovies);
+            dao.insert(newMovies);
 
             PrintWriter out = response.getWriter();
             response.setContentType("text/plain");
             out.println("Movie(s) added!");
-        } catch (IOException | SQLException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
